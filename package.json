@@ -1,0 +1,77 @@
+{
+  "name": "sops-lens",
+  "displayName": "SOPS Lens",
+  "description": "Render SOPS-encrypted file values in-editor as CodeLens / hover / ghost-text decorations. Decrypts via the sops CLI in-memory, never writes plaintext to disk.",
+  "version": "0.1.0",
+  "publisher": "oriz-org",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["Other"],
+  "keywords": ["sops", "age", "secrets", "encryption", "env", "codelens"],
+  "activationEvents": [
+    "onLanguage:yaml",
+    "onLanguage:json",
+    "onLanguage:dotenv",
+    "onLanguage:plaintext",
+    "workspaceContains:**/.env.enc",
+    "workspaceContains:**/*.enc",
+    "workspaceContains:**/.sops.yaml"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "SOPS Lens",
+      "properties": {
+        "sopsLens.displayStyle": {
+          "type": "string",
+          "enum": ["codelens", "hover", "ghost-text", "all"],
+          "default": "codelens",
+          "description": "How to display decrypted values: inline CodeLens above each line, hover tooltips, ghost-text decorations after the value, or all three."
+        },
+        "sopsLens.sopsBinary": {
+          "type": "string",
+          "default": "sops",
+          "description": "Path to the sops binary. Defaults to 'sops' which must be on PATH."
+        },
+        "sopsLens.decryptOnOpen": {
+          "type": "boolean",
+          "default": true,
+          "description": "Decrypt on file open. If false, no decryption happens until you run the 'SOPS Lens: Reveal' command."
+        },
+        "sopsLens.maxFileSizeKB": {
+          "type": "number",
+          "default": 512,
+          "description": "Skip decryption for files larger than this (KB). Protects against accidentally running sops on a giant binary."
+        }
+      }
+    },
+    "commands": [
+      { "command": "sopsLens.reveal", "title": "SOPS Lens: Reveal (decrypt + show)" },
+      { "command": "sopsLens.hide", "title": "SOPS Lens: Hide (clear cache)" },
+      { "command": "sopsLens.copyValue", "title": "SOPS Lens: Copy decrypted value" },
+      { "command": "sopsLens.refresh", "title": "SOPS Lens: Refresh (re-decrypt)" }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package",
+    "lint": "biome check src/",
+    "format": "biome format --write src/"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.85.0",
+    "@biomejs/biome": "^1.9.0",
+    "@vscode/vsce": "^3.2.0",
+    "typescript": "^5.6.0"
+  },
+  "license": "MIT",
+  "author": "Chirag Singhal <76880977+chirag127@users.noreply.github.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oriz-org/sops-lens-vsc-ext.git"
+  },
+  "bugs": { "url": "https://github.com/oriz-org/sops-lens-vsc-ext/issues" },
+  "homepage": "https://github.com/oriz-org/sops-lens-vsc-ext#readme"
+}
