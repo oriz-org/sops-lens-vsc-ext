@@ -2,11 +2,22 @@
   "name": "sops-lens",
   "displayName": "SOPS Lens",
   "description": "Render SOPS-encrypted file values in-editor as CodeLens / hover / ghost-text decorations. Decrypts via the sops CLI in-memory, never writes plaintext to disk.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "oriz-org",
-  "engines": { "vscode": "^1.85.0" },
-  "categories": ["Other"],
-  "keywords": ["sops", "age", "secrets", "encryption", "env", "codelens"],
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "sops",
+    "age",
+    "secrets",
+    "encryption",
+    "env",
+    "codelens"
+  ],
   "activationEvents": [
     "onLanguage:yaml",
     "onLanguage:json",
@@ -23,7 +34,12 @@
       "properties": {
         "sopsLens.displayStyle": {
           "type": "string",
-          "enum": ["codelens", "hover", "ghost-text", "all"],
+          "enum": [
+            "codelens",
+            "hover",
+            "ghost-text",
+            "all"
+          ],
           "default": "codelens",
           "description": "How to display decrypted values: inline CodeLens above each line, hover tooltips, ghost-text decorations after the value, or all three."
         },
@@ -45,10 +61,30 @@
       }
     },
     "commands": [
-      { "command": "sopsLens.reveal", "title": "SOPS Lens: Reveal (decrypt + show)" },
-      { "command": "sopsLens.hide", "title": "SOPS Lens: Hide (clear cache)" },
-      { "command": "sopsLens.copyValue", "title": "SOPS Lens: Copy decrypted value" },
-      { "command": "sopsLens.refresh", "title": "SOPS Lens: Refresh (re-decrypt)" }
+      {
+        "command": "sopsLens.reveal",
+        "title": "SOPS Lens: Reveal (decrypt + show)"
+      },
+      {
+        "command": "sopsLens.hide",
+        "title": "SOPS Lens: Hide (clear cache)"
+      },
+      {
+        "command": "sopsLens.copyValue",
+        "title": "SOPS Lens: Copy decrypted value"
+      },
+      {
+        "command": "sopsLens.refresh",
+        "title": "SOPS Lens: Refresh (re-decrypt)"
+      },
+      {
+        "command": "sopsLens.editVirtual",
+        "title": "SOPS Lens: Edit decrypted (virtual view)"
+      },
+      {
+        "command": "sopsLens.saveVirtual",
+        "title": "SOPS Lens: Save virtual (re-encrypt)"
+      }
     ]
   },
   "scripts": {
@@ -72,6 +108,8 @@
     "type": "git",
     "url": "https://github.com/oriz-org/sops-lens-vsc-ext.git"
   },
-  "bugs": { "url": "https://github.com/oriz-org/sops-lens-vsc-ext/issues" },
+  "bugs": {
+    "url": "https://github.com/oriz-org/sops-lens-vsc-ext/issues"
+  },
   "homepage": "https://github.com/oriz-org/sops-lens-vsc-ext#readme"
 }

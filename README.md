@@ -72,23 +72,35 @@ code --install-extension sops-lens-0.1.0.vsix
 | `SOPS Lens: Hide` | Clear cache for active file + hide decorations |
 | `SOPS Lens: Refresh` | Re-decrypt everything (after editing keys / rotating) |
 | `SOPS Lens: Copy decrypted value` | Used by CodeLens click — copies to clipboard, auto-clears after 30 s |
+| `SOPS Lens: Edit decrypted (virtual view)` | **NEW v0.2** — opens decrypted plaintext in a virtual editor; never on disk |
+| `SOPS Lens: Save virtual (re-encrypt)` | **NEW v0.2** — re-encrypts the virtual view back to the source .enc file via sops |
+
+## Editing encrypted files
+
+There's a `✏️ Edit decrypted (virtual view)` CodeLens at the top of every detected encrypted file. Click it OR run `SOPS Lens: Edit decrypted (virtual view)`:
+
+1. A new editor opens with the decrypted plaintext. The URI scheme is `sops-lens-edit://` so VS Code marks it as untitled / unsaved.
+2. Edit normally.
+3. Run `SOPS Lens: Save virtual (re-encrypt)` to write back. The extension re-encrypts the edited plaintext via `sops encrypt` and atomically replaces the source `.enc` file.
+4. Any open editor showing the source file auto-reverts from disk; CodeLens / hover / ghost-text refresh to the new values.
+
+**Plaintext never touches disk** — the virtual document lives only in memory. The `.tmp` file used for atomic replace contains only the freshly-encrypted ciphertext, then is renamed to the source path.
 
 ## How it decides a file is encrypted
 
 In order:
 1. Filename ends in `.enc` or contains `.encrypted.`
 2. File contents have a `sops:` / `"sops":` / `sops_version:` metadata marker in the first 200 lines
+3. **NEW v0.2** — A nearby `.sops.yaml` (walked up from the file's directory, max 20 levels) has a `creation_rules` entry whose `path_regex` or `path_glob` matches the file's relative path
 
-If neither matches, the extension does nothing. No performance cost on regular files.
+If none match, the extension does nothing. No performance cost on regular files.
 
 ## Supported encrypted file formats
 
 - **YAML** (`.yaml.enc`, `.yml.enc`, or `.yaml` with a sops block) — line-by-line key/value parse
 - **JSON** (`.json.enc`) — flattened key paths (e.g. `database.password`)
 - **dotenv** (`.env.enc`, `.dotenv.enc`) — `KEY=VALUE` line parse
-- Auto-detect by extension; falls back to YAML for unknown extensions with a sops block
-
-Binary sops files are not supported (they have no key/value structure to render).
+- **NEW v0.2: Binary** (`.bin.enc`, `.binary.enc`, or `.enc` files without a sops-yaml marker) — read-only blob preview. UTF-8 text shown when printable; otherwise hex head + byte count. Click to copy the full decoded blob.
 
 ## Security caveats
 
